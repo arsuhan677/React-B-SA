@@ -29,27 +29,81 @@ export default function App() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
+  const [search, setSearch] = useState("");
 
   const deleteBlog = (id) => {
     setBlogs(blogs.filter((item) => item.id !== id));
   };
 
-  const addBlog = (e) => {  
+  // edit
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
+
+  const handleEdit = (blog) => {
+    setIsEditing(true);
+    setEditId(blog.id);
+    setTitle(blog.title);
+    setContent(blog.content);
+    setAuthor(blog.author);
+  };
+
+  const addBlog = (e) => {
     e.preventDefault();
-    setBlogs([
-      ...blogs,
-      {
-        id: blogs.length + 1,
-        title,
-        content,
-        author,
-        date: new Date().toISOString().slice(0, 10),
-      },
-    ]);
+
+    if (isEditing) {
+      // যদি edit mode এ থাকি → পুরনো blog update করব
+      const updatedBlogs = blogs.map((item) =>
+        item.id === editId ? { ...item, title, content, author } : item
+      );
+      setBlogs(updatedBlogs);
+      setIsEditing(false);
+      setEditId(null);
+    } else {
+      // নতুন ব্লগ তৈরি
+      setBlogs([
+        ...blogs,
+        {
+          id: blogs.length + 1,
+          title,
+          content,
+          author,
+          date: new Date().toISOString().slice(0, 10),
+        },
+      ]);
+    }
+
+    // ফর্ম রিসেট
     setTitle("");
     setContent("");
     setAuthor("");
   };
+
+  const filteredBlogs = blogs.filter(
+  (item) =>
+    item.title.toLowerCase().includes(search.toLowerCase()) ||
+    item.author.toLowerCase().includes(search.toLowerCase()) ||
+    item.content.toLowerCase().includes(search.toLowerCase())
+);
+
+
+  // end edit
+
+  // const addBlog = (e) => {
+  //   e.preventDefault();
+  //   setBlogs([
+  //     ...blogs,
+  //     {
+  //       id: blogs.length + 1,
+  //       title,
+  //       content,
+  //       author,
+  //       date: new Date().toISOString().slice(0, 10),
+  //     },
+  //   ]);
+  //   setTitle("");
+  //   setContent("");
+  //   setAuthor("");
+  // };
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center">
@@ -57,6 +111,8 @@ export default function App() {
       {/* blog list header: search, add new blog */}
       {/* todo:: search blog */}
       <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         type="text"
         name="search"
         placeholder="Search blogs..."
@@ -64,7 +120,10 @@ export default function App() {
       />
       {/* extract this part into a separate component */}
       <div className="border border-gray-300 rounded-md p-4 my-4">
-        <form className="flex items-center flex-col space-y-2" onSubmit={addBlog}>
+        <form
+          className="flex items-center flex-col space-y-2"
+          onSubmit={addBlog}
+        >
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -92,13 +151,39 @@ export default function App() {
           />
 
           {/* todo:: conditionally active/inactive add button */}
-          <button type="submit" className="bg-[#007bff] text-white px-4 py-2 rounded-md cursor-pointer">
-            Add New Blog
+          <button
+            type="submit"
+            className="bg-[#007bff] text-white px-4 py-2 rounded-md cursor-pointer"
+          >
+            {isEditing ? "Update Blog" : "Add New Blog"}
           </button>
+
+          {/* <button
+            type="submit"
+            className="bg-[#007bff] text-white px-4 py-2 rounded-md cursor-pointer"
+          >
+            Add New Blog
+          </button> */}
         </form>
       </div>
 
       {/* blog list */}
+      {/* blog list */}
+<div className="mt-5">
+  {filteredBlogs.length === 0 ? (
+    <p className="text-gray-500">No blogs found</p>
+  ) : (
+    filteredBlogs.map((item) => (
+      <Blog
+        key={item.id}
+        blog={item}
+        deleteBlog={deleteBlog}
+        handleEdit={handleEdit}
+      />
+    ))
+  )}
+</div>
+
       <div className="mt-5">
         {blogs.length === 0 ? (
           <p className="text-gray-500">No blogs available</p>
@@ -108,7 +193,9 @@ export default function App() {
               key={item.id}
               blog={item}
               deleteBlog={deleteBlog}
+              handleEdit={handleEdit}
             />
+            // <Blog key={item.id} blog={item} deleteBlog={deleteBlog} />
           ))
         )}
       </div>
