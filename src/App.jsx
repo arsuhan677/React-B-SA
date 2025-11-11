@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Blog from "./components/Blog";
+// import Suhan from "./components/basicreact/Suhan";
+// import Suhan1 from "./components/basicreact/Suhan1";
 
 export default function App() {
   const [blogs, setBlogs] = useState([
@@ -72,7 +74,7 @@ export default function App() {
       ]);
     }
 
-    // ফর্ম রিসেট
+    //
     setTitle("");
     setContent("");
     setAuthor("");
@@ -107,6 +109,8 @@ export default function App() {
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center">
+      {/* <Suhan /> */}
+      {/* <Suhan1 /> */}
       <h1 className="text-3xl font-bold">Blog</h1>
       {/* blog list header: search, add new blog */}
       {/* todo:: search blog */}
@@ -168,8 +172,7 @@ export default function App() {
       </div>
 
       {/* blog list */}
-      {/* blog list */}
-<div className="mt-5">
+{/* <div className="mt-5">
   {filteredBlogs.length === 0 ? (
     <p className="text-gray-500">No blogs found</p>
   ) : (
@@ -182,7 +185,7 @@ export default function App() {
       />
     ))
   )}
-</div>
+</div> */}
 
       <div className="mt-5">
         {blogs.length === 0 ? (
