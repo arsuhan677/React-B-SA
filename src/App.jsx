@@ -1,32 +1,8 @@
 import { useState } from "react";
 import Blog from "./components/Blog";
-// import Suhan from "./components/basicreact/Suhan";
-// import Suhan1 from "./components/basicreact/Suhan1";
 
 export default function App() {
-  const [blogs, setBlogs] = useState([
-    // {
-    //   id: 1,
-    //   title: "Blog 1",
-    //   content: "This is the content of blog 1",
-    //   author: "Author 1",
-    //   date: "2023-01-01",
-    // },
-    // {
-    //   id: 2,
-    //   title: "Blog 2",
-    //   content: "This is the content of blog 2",
-    //   author: "Author 2",
-    //   date: "2023-01-02",
-    // },
-    // {
-    //   id: 3,
-    //   title: "Blog 3",
-    //   content: "This is the content of blog 3",
-    //   author: "Author 3",
-    //   date: "2023-01-03",
-    // },
-  ]);
+  const [blogs, setBlogs] = useState([]);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -37,7 +13,6 @@ export default function App() {
     setBlogs(blogs.filter((item) => item.id !== id));
   };
 
-  // edit
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -53,7 +28,6 @@ export default function App() {
     e.preventDefault();
 
     if (isEditing) {
-      // blog update
       const updatedBlogs = blogs.map((item) =>
         item.id === editId ? { ...item, title, content, author } : item
       );
@@ -61,7 +35,6 @@ export default function App() {
       setIsEditing(false);
       setEditId(null);
     } else {
-      //
       setBlogs([
         ...blogs,
         {
@@ -74,7 +47,6 @@ export default function App() {
       ]);
     }
 
-    //
     setTitle("");
     setContent("");
     setAuthor("");
@@ -88,76 +60,74 @@ export default function App() {
   );
 
   return (
-    <div className="container mx-auto flex justify-between">
-      <div className="borde border-gray-300 rounded-md p-6 my-4 w-250">
-        <h1 className="text-3xl font-bold">Blog</h1>
+    <div className="container mx-auto px-4 py-6">
 
-        <input
-          onClick={filteredBlogs}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          name="search"
-          placeholder="Search blogs..."
-          className="border border-gray-300 rounded-md px-4 py-2 mr-2 my-4"
-        />
-        <form
-          className="flex items-center flex-col space-y-2"
-          onSubmit={addBlog}
-        >
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            type="text"
-            name="title"
-            placeholder="Blog title"
-            className="border border-gray-300 w-full rounded-md px-4 py-2 mr-2"
-          />
+      <div className="flex flex-col lg:flex-row gap-6 justify-between">
+        <div className="border border-gray-300 rounded-md p-6 w-full lg:w-[40%] max-h-[450px] overflow-y-auto bg-white shadow">
+          <h1 className="text-3xl font-bold mb-4 text-center lg:text-left">Blog</h1>
 
           <input
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            onClick={filteredBlogs}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             type="text"
-            name="author"
-            placeholder="Author"
-            className="border border-gray-300 w-full rounded-md px-4 py-2 mr-2"
+            placeholder="Search blogs..."
+            className="border border-gray-300 rounded-md px-4 py-2 w-full mb-4"
           />
 
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            name="content"
-            placeholder="Blog content"
-            className="border border-gray-300 rounded-md px-4 w-full py-2 mr-2"
-          />
+          <form className="flex flex-col space-y-3" onSubmit={addBlog}>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              type="text"
+              placeholder="Blog title"
+              className="border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
 
-          <button
-            type="submit"
-            className="bg-[#007bff] text-white px-4 py-2 w-full rounded-md cursor-pointer"
-          >
-            {isEditing ? "Update Blog" : "Add New Blog"}
-          </button>
-        </form>
-      </div>
-      {/* <div className=""> */}
-        {/* extract this part into a separate component */}
+            <input
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              type="text"
+              placeholder="Author"
+              className="border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
 
-        <div className="mt-5 border border-gray-400 rounded-xl w-full p-6">
-          {blogs.length === 0 ? (
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Blog content"
+              className="border border-gray-300 rounded-md px-4 py-2 h-32 w-full"
+            ></textarea>
+
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-2 rounded-md w-full hover:bg-blue-700 transition"
+            >
+              {isEditing ? "Update Blog" : "Add New Blog"}
+            </button>
+          </form>
+        </div>
+
+        {/* Blogs listt*/}
+        <div className="border border-gray-300 rounded-md p-6 w-full lg:w-[60%] bg-white shadow overflow-y-auto">
+          <h2 className="text-xl font-semibold mb-4 text-center lg:text-left">
+            All Blogs
+          </h2>
+
+          {filteredBlogs.length === 0 ? (
             <p className="text-gray-500">No blogs available</p>
           ) : (
-            blogs.map((item) => (
+            filteredBlogs.map((item) => (
               <Blog
                 key={item.id}
                 blog={item}
                 deleteBlog={deleteBlog}
                 handleEdit={handleEdit}
               />
-              // <Blog key={item.id} blog={item} deleteBlog={deleteBlog} />
             ))
           )}
         </div>
-      {/* </div> */}
+      </div>
     </div>
   );
 }
